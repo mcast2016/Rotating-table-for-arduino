@@ -8,6 +8,8 @@
     モータドライバ:A4988(Allegro)
     https://www.amazon.co.jp/gp/product/B084XB43QZ/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
     https://iot.keicode.com/arduino/arduino-stepper-motor-a4988.php
+    フォトカプラ
+    
 */
 long _beforetime = 0;
 const int DIR  = 7;
@@ -27,31 +29,29 @@ void setup() {
     i = 0;
     i_angle = 0;
     angle = 0;
-    motor_pls = 1500;
+    motor_pls = 2000;
     Serial.begin(9600);
     pinMode(ENC_INPUT_PIN,INPUT);
     _beforetime = millis();
 }
 
 void loop() {
-  //エンコーダの位置に応じて動く
-  if(digitalRead(ENC_INPUT_PIN)==HIGH){
+  //20ステップ動く
+  while(i <20){
     Serial.print("sensorMODE=");
     Serial.print(digitalRead(ENC_INPUT_PIN));
     Serial.print(", i=");
     Serial.println(i);
-    i = i+1;
-    while(digitalRead(ENC_INPUT_PIN)==HIGH){
-      moving(motor_pls);
+    moving(motor_pls);
+    if(digitalRead(ENC_INPUT_PIN)==HIGH){
+      i = i+1;
+      while(digitalRead(ENC_INPUT_PIN)==HIGH){
+      moving(motor_pls);  
+      }
     }
   }
-  else if (digitalRead(ENC_INPUT_PIN)==LOW){
-    while(digitalRead(ENC_INPUT_PIN)==LOW){
-      moving(motor_pls);
-    }
-  }
-  //360度回転したら停止
-  if(i > 200){
+  //20ステップで停止
+  if(i > 20){
     motor_pls = 0;
     while (i < 2000){
       Serial.println("STOP!!");
